@@ -7,8 +7,8 @@ function createCard(initialCards, deleteCallback) {
   cardElement.querySelector(".card__title").textContent = initialCards.cardName;
 
   const deleteButton = cardElement.querySelector(".card__delete-button");
-  const deleteFn = () => deleteCallback(cardElement);
-  deleteButton.addEventListener("click", deleteFn);
+  const deleteFunction = () => deleteCallback(cardElement);
+  deleteButton.addEventListener("click", deleteFunction);
 
   return cardElement;
 }
