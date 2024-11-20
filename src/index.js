@@ -1,3 +1,7 @@
+import "./pages/index.css"; // импорт главного файла стилей
+import "./scripts/cards.js";
+import { initialCards } from "./scripts/cards.js";
+
 const cardsContainer = document.querySelector(".places__list");
 
 function createCard(cardData, deleteCallback) {
