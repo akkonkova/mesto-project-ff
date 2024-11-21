@@ -29,13 +29,6 @@ export function createCard(cardData, deleteCallback, likeCallback, openImageCall
   return cardElement
 }
 
-export const openImagePopup = (imageLink, imageAlt, imageTitle) => {
-  popupImage.src = imageLink
-  popupImage.alt = imageAlt
-  popupCaption.textContent = imageTitle
-  openModal(popupImageElement)
-}
-
 export const deleteCard = (element) => element.remove()
 
 export const likeCard = (evt) => evt.target.classList.toggle('card__like-button_is-active')

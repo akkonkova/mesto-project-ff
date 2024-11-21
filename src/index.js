@@ -9,27 +9,31 @@ import { initialCards } from './scripts/cards.js'
 import { createCard, deleteCard, likeCard } from './scripts/card.js'
 import { openModal, closeModal, closePopupOnOverlayClick } from './scripts/modal.js'
 
+const allPopupsOnPage = document.querySelectorAll('.popup')
 const cardsContainer = document.querySelector('.places__list')
 const editProfileButton = document.querySelector('.profile__edit-button')
 const editProfilePopup = document.querySelector('.popup')
 const editProfileForm = document.forms['edit-profile']
 const closePopupButton = document.querySelectorAll('.popup__close')
-const savePopupButton = document.querySelectorAll('.popup__button')
 const createCardButton = document.querySelector('.profile__add-button')
 const createCardPopup = document.querySelector('.popup_type_new-card')
 const createCardForm = document.forms['new-place']
 const formElement = document.querySelector('.popup__form')
 const nameInput = document.querySelector('.popup__input_type_name')
 const jobInput = document.querySelector('.popup__input_type_description')
-const popupImageElement = document.querySelector(".popup_type_image");
+const popupImageElement = document.querySelector('.popup_type_image')
 const popupImage = popupImageElement.querySelector('.popup__image')
 const popupCaption = popupImageElement.querySelector('.popup__caption')
 const profileTitle = document.querySelector('.profile__title')
 const profileDescription = document.querySelector('.profile__description')
 
+//добавляем всем поп-апам анимацию для плавного появления
+allPopupsOnPage.forEach((popup) => {
+  popup.classList.add('popup_is-animated')
+})
 
-initialCards.forEach((item) => {
-  cardsContainer.append(createCard(item, deleteCard, likeCard, openImagePopup))
+initialCards.forEach((card) => {
+  cardsContainer.append(createCard(card, deleteCard, likeCard, openImagePopup))
 })
 
 //функция для заполнения формы профиля + вызов в ней внутри функции openmodal
@@ -64,17 +68,28 @@ function handleFormSubmit(evt) {
 
 formElement.addEventListener('submit', handleFormSubmit)
 
-// создание новой карточки
-// createCardForm.addEventListener('submit',)
+// создание новой карточки по клику на плюс
+function handleCreateCardFormSubmit(evt) {
+  evt.preventDefault()
+  const cardData = {
+    cardName: createCardForm.elements['place-name'].value,
+    cardLink: createCardForm.elements.link.value,
+    altText: createCardForm.elements['place-name'].value,
+  }
+  cardsContainer.prepend(createCard(cardData, deleteCard, likeCard, openImagePopup))
+  closeModal(createCardPopup)
+  createCardForm.reset()
+}
 
-// closeModal(createCardPopup);
-// createCardForm.reset();
+createCardForm.addEventListener('submit', handleCreateCardFormSubmit)
 
 
-// функция открытия модального окна изображения карточки.
+// функция открытия модального окна с изображением карточки и обработчик для закрытия по клику на оверлей
 function openImagePopup(imageLink, imageAlt, imageTitle) {
-  popupImage.src = imageLink;
-  popupImage.alt = imageAlt;
-  popupCaption.textContent = imageTitle;
-  openModal(popupImageElement);
-};
+  popupImage.src = imageLink
+  popupImage.alt = imageAlt
+  popupCaption.textContent = imageTitle
+  openModal(popupImageElement)
+}
+
+popupImageElement.addEventListener('click', closePopupOnOverlayClick)
