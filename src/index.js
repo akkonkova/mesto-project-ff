@@ -14,7 +14,6 @@ const popupCloseButton = document.querySelectorAll('.popup__close')
 const cardCreateButton = document.querySelector('.profile__add-button')
 const cardCreatePopup = document.querySelector('.popup_type_new-card')
 const cardCreateForm = document.forms['new-place']
-const formElement = document.querySelector('.popup__form')
 const nameInput = document.querySelector('.popup__input_type_name')
 const jobInput = document.querySelector('.popup__input_type_description')
 const imagePopupElement = document.querySelector('.popup_type_image')
@@ -37,10 +36,10 @@ popupCloseButton.forEach((item) => {
 })
 
 //функция для заполнения формы профиля и открытия попапа
-function fillProfileUserinfo(formName, popupName) {
-  formName.elements.name.value = profileTitle.textContent
-  formName.elements.description.value = profileDescription.textContent
-  openModal(popupName)
+function fillProfileUserinfo(formElement, popupElement) {
+  formElement.elements.name.value = profileTitle.textContent
+  formElement.elements.description.value = profileDescription.textContent
+  openModal(popupElement)
 }
 
 // попап для редактирования профиля
@@ -55,17 +54,17 @@ cardCreateButton.addEventListener('click', () => openModal(cardCreatePopup))
 cardCreatePopup.addEventListener('click', closePopupOnOverlayClick)
 
 // обработчик «отправки» данных из формы
-function handleFormSubmit(evt) {
+function handleProfilePopupFormSubmit(evt) {
   evt.preventDefault()
   profileTitle.textContent = nameInput.value
   profileDescription.textContent = jobInput.value
   closeModal(profilePopup)
 }
 
-formElement.addEventListener('submit', handleFormSubmit)
+profilePopupForm.addEventListener('submit', handleProfilePopupFormSubmit)
 
 // создание новой карточки по клику на плюс
-function handlecardCreateFormSubmit(evt) {
+function handleCardCreateFormSubmit(evt) {
   evt.preventDefault()
   const cardData = {
     cardName: cardCreateForm.elements['place-name'].value,
@@ -77,7 +76,7 @@ function handlecardCreateFormSubmit(evt) {
   cardCreateForm.reset()
 }
 
-cardCreateForm.addEventListener('submit', handlecardCreateFormSubmit)
+cardCreateForm.addEventListener('submit', handleCardCreateFormSubmit)
 
 // функция открытия модального окна с изображением карточки и обработчик для закрытия по клику на оверлей
 function openImagePopup(imageLink, imageAlt, imageTitle) {

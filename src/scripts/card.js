@@ -11,7 +11,7 @@ export function createCard(cardData, deleteCallback, likeCallback, openImageCall
   cardImage.alt = cardData.altText
 
   const openFullImageFn = () => {
-    openImageCallback(cardImage.src, cardImage.alt, cardTitle.textContent)
+    openImageCallback(cardData.cardLink, cardData.altText, cardData.cardName)
   }
   cardImage.addEventListener('click', openFullImageFn)
 
