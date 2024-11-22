@@ -1,6 +1,3 @@
-// в файле card.js описаны функции для работы с карточками: функция создания карточки,
-// функции-обработчики событий удаления и лайка карточки;
-
 export function createCard(cardData, deleteCallback, likeCallback, openImageCallback) {
   const cardTemplate = document.querySelector('#card-template').content
   const cardElement = cardTemplate.querySelector('.card').cloneNode(true)
