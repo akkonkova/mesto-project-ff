@@ -2,6 +2,7 @@ import './pages/index.css'
 import { initialCards } from './scripts/cards.js'
 import { createCard, deleteCard, likeCard } from './scripts/card.js'
 import { openModal, closeModal, closePopupOnOverlayClick } from './scripts/modal.js'
+import { enableValidation, clearValidation} from './scripts/validation.js'
 
 const allPopupsOnPage = document.querySelectorAll('.popup')
 const cardsContainer = document.querySelector('.places__list')
@@ -20,6 +21,15 @@ const imagePopupElement = document.querySelector('.popup_type_image')
 const popupCaption = imagePopupElement.querySelector('.popup__caption')
 const imagePopup = imagePopupElement.querySelector('.popup__image')
 
+const validationConfig = {
+  formSelector: '.popup__form',
+  inputSelector: '.popup__input',
+  submitButtonSelector: '.popup__button',
+  inactiveButtonClass: 'popup__button_disabled',
+  inputErrorClass: 'popup__input_type_error',
+  errorClass: 'popup__error_visible',
+}
+
 //инициализируем все карточки из массива
 initialCards.forEach((item) => {
   cardsContainer.append(createCard(item, deleteCard, likeCard, openImagePopup))
@@ -36,15 +46,16 @@ popupCloseButton.forEach((item) => {
 })
 
 //функция для заполнения формы профиля и открытия попапа
-function fillProfileUserinfo(formElement, popupElement) {
+function fillProfileUserinfo(formElement, popupElement, selectorsConfig) {
   formElement.elements.name.value = profileTitle.textContent
   formElement.elements.description.value = profileDescription.textContent
   openModal(popupElement)
+  clearValidation(formElement, selectorsConfig)
 }
 
 // попап для редактирования профиля
 profileEditButton.addEventListener('click', () =>
-  fillProfileUserinfo(profilePopupForm, profilePopup)
+  fillProfileUserinfo(profilePopupForm, profilePopup, validationConfig)
 )
 
 profilePopup.addEventListener('click', closePopupOnOverlayClick)
@@ -74,6 +85,7 @@ function handleCardCreateFormSubmit(evt) {
   cardsContainer.prepend(createCard(cardData, deleteCard, likeCard, openImagePopup))
   closeModal(cardCreatePopup)
   cardCreateForm.reset()
+  clearValidation(cardCreateForm, validationConfig)
 }
 
 cardCreateForm.addEventListener('submit', handleCardCreateFormSubmit)
@@ -87,3 +99,5 @@ function openImagePopup(imageLink, imageAlt, imageTitle) {
 }
 
 imagePopupElement.addEventListener('click', closePopupOnOverlayClick)
+
+enableValidation(validationConfig)
