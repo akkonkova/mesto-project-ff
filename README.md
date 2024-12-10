@@ -9,3 +9,5 @@ npm i
 npm run dev
 ```
 
+### Ссылка на проект
+https://akkonkova.github.io/mesto-project-ff/
