@@ -30,6 +30,9 @@ const validationConfig = {
   errorClass: 'popup__error_visible',
 }
 
+//включение валидации всех форм
+enableValidation(validationConfig)
+
 //инициализируем все карточки из массива
 initialCards.forEach((item) => {
   cardsContainer.append(createCard(item, deleteCard, likeCard, openImagePopup))
@@ -99,5 +102,3 @@ function openImagePopup(imageLink, imageAlt, imageTitle) {
 }
 
 imagePopupElement.addEventListener('click', closePopupOnOverlayClick)
-
-enableValidation(validationConfig)

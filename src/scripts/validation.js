@@ -15,14 +15,14 @@ function hasInvalidInput(inputList) {
 }
 
 const showInputError = (formElement, inputElement, errorMessage, selectorsConfig) => {
-  const errorElement = formElement.querySelector(`.${inputElement.id}-error`)
+  const errorElement = formElement.querySelector(`.${inputElement.id}.popup__input-error`)
   inputElement.classList.add(selectorsConfig.inputErrorClass)
   errorElement.classList.add(selectorsConfig.errorClass)
   errorElement.textContent = errorMessage
 }
 
 const hideInputError = (formElement, inputElement, selectorsConfig) => {
-  const errorElement = formElement.querySelector(`.${inputElement.id}-error`)
+  const errorElement = formElement.querySelector(`.${inputElement.id}.popup__input-error`)
   inputElement.classList.remove(selectorsConfig.inputErrorClass)
   errorElement.classList.remove(selectorsConfig.errorClass)
   errorElement.textContent = ''
@@ -44,12 +44,15 @@ const checkInputValidity = (formElement, inputElement, selectorsConfig) => {
 const setEventListeners = (formElement, selectorsConfig) => {
   const inputList = Array.from(formElement.querySelectorAll(selectorsConfig.inputSelector))
   const buttonElement = formElement.querySelector(selectorsConfig.submitButtonSelector)
+  //сначала проверяем состояние кнопки, чтобы задизейблить при необходимости
+  toggleButtonState(inputList, buttonElement, selectorsConfig)
 
-  formElement.addEventListener('reset', () => {
-    setTimeout(() => {
-      toggleButtonState(inputList, buttonElement, selectorsConfig)
-    }, 0)
-  })
+  // Обработчик события reset для формы, при сбросе формы обновляем состояние кнопки
+  // formElement.addEventListener('reset', () => {
+  //   setTimeout(() => {
+  //     toggleButtonState(inputList, buttonElement, selectorsConfig)
+  //   }, 0)
+  // })
 
   inputList.forEach((inputElement) => {
     inputElement.addEventListener('input', function () {
@@ -72,6 +75,7 @@ export function enableValidation(selectorsConfig) {
 export function clearValidation(formElement, selectorsConfig) {
   const inputList = Array.from(formElement.querySelectorAll(selectorsConfig.inputSelector))
   const buttonElement = formElement.querySelector(selectorsConfig.submitButtonSelector)
+  buttonElement.classList.add(selectorsConfig.inactiveButtonClass);
 
   inputList.forEach((inputElement) => {
     hideInputError(formElement, inputElement, selectorsConfig)

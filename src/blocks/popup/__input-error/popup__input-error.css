@@ -1,7 +1,11 @@
 .popup__input-error {
+  display: block;
+  padding: 0;
+  visibility: hidden;
   color: #f00;
   padding-block-start: 5px;
   font-family: Inter;
   font-size: 12px;
   font-weight: 400;
+  min-block-size: 30px;
 }
