@@ -6,12 +6,12 @@ export function createCard(cardData, deleteCallback, likeCallback, openImageCall
   const cardDeleteButton = cardElement.querySelector('.card__delete-button')
   const cardLikeButton = cardElement.querySelector('.card__like-button')
 
-  cardImage.src = cardData.cardLink
-  cardTitle.textContent = cardData.cardName
-  cardImage.alt = cardData.altText
+  cardImage.src = cardData.link
+  cardTitle.textContent = cardData.name
+  cardImage.alt = cardData.name
 
   const openFullImageFn = () => {
-    openImageCallback(cardData.cardLink, cardData.altText, cardData.cardName)
+    openImageCallback(cardData.link, cardData.name, cardData.name)
   }
   cardImage.addEventListener('click', openFullImageFn)
 
