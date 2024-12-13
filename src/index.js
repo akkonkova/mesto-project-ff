@@ -1,10 +1,10 @@
 import './pages/index.css'
 import { initialCards } from './scripts/cards.js'
-import { createCard, deleteCard, likeCard } from './scripts/card.js'
+import { createCard, likeCard } from './scripts/card.js'
 import { openModal, closeModal, closePopupOnOverlayClick } from './scripts/modal.js'
 import { enableValidation, clearValidation } from './scripts/validation.js'
 import {
-  getDataFromAPI,
+  deleteCard,
   handleError,
   getUserDataForProfile,
   updateProfileAvatar,
@@ -28,6 +28,8 @@ const popupCloseButton = document.querySelectorAll('.popup__close')
 const cardCreateButton = document.querySelector('.profile__add-button')
 const cardCreatePopup = document.querySelector('.popup_type_new-card')
 const cardCreateForm = document.forms['new-place']
+const cardCreateFormNameInput = cardCreateForm.querySelector('.popup__input_type_card-name')
+const cardCreateFormLinkInput = cardCreateForm.querySelector('.popup__input_type_url')
 const imagePopupElement = document.querySelector('.popup_type_image')
 const imagePopup = imagePopupElement.querySelector('.popup__image')
 const popupCaption = imagePopupElement.querySelector('.popup__caption')
@@ -35,6 +37,7 @@ const avatarPopup = document.querySelector('.popup_type_edit-avatar')
 const avatarPopupForm = document.forms['edit-avatar']
 const avatarPopupFormButton = avatarPopupForm.querySelector('.popup__button')
 const avatarPopupInput = avatarPopupForm.querySelector('.popup__input_type_avatar')
+const avatarContainer = document.querySelector('.profile__image-container')
 
 let userId
 
@@ -55,12 +58,10 @@ Promise.all([getUserDataForProfile(), getDataForInitialCards()])
     const initialCardsFromServer = data[1]
     fillProfileUserinfo(userProfileInfo)
     initialCardsFromServer.forEach((item) => {
-      cardsContainer.append(createCard(item, deleteCard, likeCard, openImagePopup))
+      cardsContainer.append(createCard(item, userId, deleteCard, likeCard, openImagePopup))
     })
   })
-  .catch((error) => {
-    handleError(error)
-  })
+  .catch(handleError)
 
 //добавляем всем поп-апам анимацию для плавного появления
 allPopupsOnPage.forEach((item) => {
@@ -76,6 +77,9 @@ popupCloseButton.forEach((item) => {
 function renderLoading(isLoading, button) {
   button.textContent = isLoading ? 'Сохранение...' : 'Сохранить'
 }
+
+//открытие формы для редактирования аватара профиля
+avatarContainer.addEventListener('click', () => openModal(avatarPopup))
 
 //функция для заполнения формы профиля и открытия попапа
 function fillProfileUserinfo(userProfileInfo) {
@@ -129,21 +133,25 @@ function handleAvatarPopupFormSubmit(evt) {
     })
 }
 
-// создание новой карточки по клику на плюс
+// создание новой карточки по клику на плюс, отправка данных из попапов для сохранения на сервере
 function handleCardCreateFormSubmit(evt) {
   evt.preventDefault()
-  const cardData = {
-    cardName: cardCreateForm.elements['place-name'].value,
-    cardLink: cardCreateForm.elements.link.value,
-    altText: cardCreateForm.elements['place-name'].value,
-  }
-  cardsContainer.prepend(createCard(cardData, deleteCard, likeCard, openImagePopup))
-  closeModal(cardCreatePopup)
-  cardCreateForm.reset()
-  clearValidation(cardCreateForm, validationConfig)
+  renderLoading(true, cardCreateButton)
+  createNewCard(cardCreateFormNameInput.value, cardCreateFormLinkInput.value)
+    .then((cardData) => {
+      const newCard = createCard(cardData, userId, deleteCard, likeCard, openImagePopup)
+      cardsContainer.prepend(newCard)
+      cardCreateForm.reset()
+      clearValidation(cardCreateForm, validationConfig)
+      closeModal(cardCreatePopup)
+    })
+    .catch(handleError)
+    .finally(() => {
+      renderLoading(false, cardCreateButton)
+    })
 }
 
-// инициализация отправки данных из попапов для сохранения на сервере
+// инициализация отправки данных на сервер при клике на кнопку "сохранить"
 profilePopupForm.addEventListener('submit', handleProfilePopupFormSubmit)
 avatarPopupForm.addEventListener('submit', handleAvatarPopupFormSubmit)
 cardCreateForm.addEventListener('submit', handleCardCreateFormSubmit)
