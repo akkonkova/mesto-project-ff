@@ -52,7 +52,7 @@ function createNewCard(name, link) {
   return getDataFromAPI('cards', 'POST', { name: name, link: link })
 }
 
-function deleteCard(id) {
+function deleteCardFromServer(id) {
   return getDataFromAPI(`cards/${id}`, 'DELETE')
 }
 
@@ -76,7 +76,7 @@ export {
   updateProfileData,
   createNewCard,
   getDataForInitialCards,
-  deleteCard,
+  deleteCardFromServer,
   addLikeOnCard,
   removeLikeFromCard,
 }

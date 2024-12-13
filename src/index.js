@@ -1,16 +1,16 @@
 import './pages/index.css'
-import { initialCards } from './scripts/cards.js'
-import { createCard, likeCard } from './scripts/card.js'
+import { createCard, deleteCard, likeCard } from './scripts/card.js'
 import { openModal, closeModal, closePopupOnOverlayClick } from './scripts/modal.js'
 import { enableValidation, clearValidation } from './scripts/validation.js'
 import {
-  deleteCard,
   handleError,
   getUserDataForProfile,
   updateProfileAvatar,
   updateProfileData,
   createNewCard,
   getDataForInitialCards,
+  addLikeOnCard,
+  removeLikeFromCard,
 } from './scripts/api.js'
 
 const allPopupsOnPage = document.querySelectorAll('.popup')
@@ -58,49 +58,58 @@ Promise.all([getUserDataForProfile(), getDataForInitialCards()])
     const initialCardsFromServer = data[1]
     fillProfileUserinfo(userProfileInfo)
     initialCardsFromServer.forEach((item) => {
-      cardsContainer.append(createCard(item, userId, deleteCard, likeCard, openImagePopup))
+      cardsContainer.append(
+        createCard(
+          item,
+          userId,
+          deleteCard,
+          likeCard,
+          openImagePopup,
+          addLikeOnCard,
+          removeLikeFromCard
+        )
+      )
     })
   })
   .catch(handleError)
 
-//добавляем всем поп-апам анимацию для плавного появления
+// добавляем всем поп-апам анимацию для плавного появления,
+// и закрытие поп-апа по клику на оверлей и крестик
 allPopupsOnPage.forEach((item) => {
   item.classList.add('popup_is-animated')
+  item.addEventListener('click', closePopupOnOverlayClick)
+  item.querySelector('.popup__close').addEventListener('click', closeModal)
 })
 
-// закрытие по крестику для всех попапов
-popupCloseButton.forEach((item) => {
-  item.addEventListener('click', closeModal)
-})
-
-//изменение текста кнопки во время клика на кнопку сохранения
+// изменение текста кнопки во время клика на кнопку сохранения
 function renderLoading(isLoading, button) {
   button.textContent = isLoading ? 'Сохранение...' : 'Сохранить'
 }
 
-//открытие формы для редактирования аватара профиля
-avatarContainer.addEventListener('click', () => openModal(avatarPopup))
+// слушатели для открытия форм / попапов по клику на соответствующие кнопки
+avatarContainer.addEventListener('click', () => {
+  clearValidation(avatarPopup, validationConfig)
+  avatarPopupForm.reset()
+  openModal(avatarPopup)
+})
+cardCreateButton.addEventListener('click', () => {
+  clearValidation(cardCreatePopup, validationConfig)
+  cardCreateForm.reset()
+  openModal(cardCreatePopup)
+})
+profileEditButton.addEventListener('click', () => {
+  clearValidation(profilePopupForm, validationConfig)
+  profilePopupForm.elements.name.value = profileTitle.textContent
+  profilePopupForm.elements.description.value = profileDescription.textContent
+  openModal(profilePopup)
+})
 
-//функция для заполнения формы профиля и открытия попапа
+// функция для заполнения формы профиля
 function fillProfileUserinfo(userProfileInfo) {
   profileTitle.textContent = userProfileInfo.name
   profileDescription.textContent = userProfileInfo.about
   profileAvatar.style.backgroundImage = `url(${userProfileInfo.avatar})`
 }
-
-//открытие попапа для редактирования профиля
-profileEditButton.addEventListener('click', () => {
-  profilePopupForm.elements.name.value = profileTitle.textContent
-  profilePopupForm.elements.description.value = profileDescription.textContent
-  openModal(profilePopup)
-  clearValidation(profilePopupForm, validationConfig)
-})
-
-profilePopup.addEventListener('click', closePopupOnOverlayClick)
-
-// попап добавления новой карточки
-cardCreateButton.addEventListener('click', () => openModal(cardCreatePopup))
-cardCreatePopup.addEventListener('click', closePopupOnOverlayClick)
 
 // обработчик «отправки» данных из формы редактирования профиля юзера
 function handleProfilePopupFormSubmit(evt) {
@@ -139,11 +148,19 @@ function handleCardCreateFormSubmit(evt) {
   renderLoading(true, cardCreateButton)
   createNewCard(cardCreateFormNameInput.value, cardCreateFormLinkInput.value)
     .then((cardData) => {
-      const newCard = createCard(cardData, userId, deleteCard, likeCard, openImagePopup)
+      const newCard = createCard(
+        cardData,
+        cardData.owner._id,
+        deleteCard,
+        likeCard,
+        openImagePopup,
+        addLikeOnCard,
+        removeLikeFromCard
+      )
       cardsContainer.prepend(newCard)
+      closeModal(cardCreatePopup)
       cardCreateForm.reset()
       clearValidation(cardCreateForm, validationConfig)
-      closeModal(cardCreatePopup)
     })
     .catch(handleError)
     .finally(() => {
@@ -151,12 +168,7 @@ function handleCardCreateFormSubmit(evt) {
     })
 }
 
-// инициализация отправки данных на сервер при клике на кнопку "сохранить"
-profilePopupForm.addEventListener('submit', handleProfilePopupFormSubmit)
-avatarPopupForm.addEventListener('submit', handleAvatarPopupFormSubmit)
-cardCreateForm.addEventListener('submit', handleCardCreateFormSubmit)
-
-// функция открытия модального окна с изображением карточки и обработчик для закрытия по клику на оверлей
+// функция открытия модального окна с изображением карточки
 function openImagePopup(imageLink, imageAlt, imageTitle) {
   imagePopup.src = imageLink
   imagePopup.alt = imageAlt
@@ -164,7 +176,10 @@ function openImagePopup(imageLink, imageAlt, imageTitle) {
   openModal(imagePopupElement)
 }
 
-imagePopupElement.addEventListener('click', closePopupOnOverlayClick)
+// инициализация отправки данных на сервер при клике на кнопку "сохранить"
+profilePopupForm.addEventListener('submit', handleProfilePopupFormSubmit)
+avatarPopupForm.addEventListener('submit', handleAvatarPopupFormSubmit)
+cardCreateForm.addEventListener('submit', handleCardCreateFormSubmit)
 
-//включение валидации всех форм
+// включение валидации всех форм
 enableValidation(validationConfig)

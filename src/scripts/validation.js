@@ -47,13 +47,6 @@ const setEventListeners = (formElement, selectorsConfig) => {
   //сначала проверяем состояние кнопки, чтобы задизейблить при необходимости
   toggleButtonState(inputList, buttonElement, selectorsConfig)
 
-  // Обработчик события reset для формы, при сбросе формы обновляем состояние кнопки
-  // formElement.addEventListener('reset', () => {
-  //   setTimeout(() => {
-  //     toggleButtonState(inputList, buttonElement, selectorsConfig)
-  //   }, 0)
-  // })
-
   inputList.forEach((inputElement) => {
     inputElement.addEventListener('input', function () {
       checkInputValidity(formElement, inputElement, selectorsConfig)
