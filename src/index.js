@@ -1,5 +1,5 @@
 import './pages/index.css'
-import { createCard, deleteCard, likeCard } from './scripts/card.js'
+import { createCard, deleteCard, toggleLike } from './scripts/card.js'
 import { openModal, closeModal, closePopupOnOverlayClick } from './scripts/modal.js'
 import { enableValidation, clearValidation } from './scripts/validation.js'
 import {
@@ -9,8 +9,6 @@ import {
   updateProfileData,
   createNewCard,
   getDataForInitialCards,
-  addLikeOnCard,
-  removeLikeFromCard,
 } from './scripts/api.js'
 
 const allPopupsOnPage = document.querySelectorAll('.popup')
@@ -58,17 +56,7 @@ Promise.all([getUserDataForProfile(), getDataForInitialCards()])
     const initialCardsFromServer = data[1]
     fillProfileUserinfo(userProfileInfo)
     initialCardsFromServer.forEach((item) => {
-      cardsContainer.append(
-        createCard(
-          item,
-          userId,
-          deleteCard,
-          likeCard,
-          openImagePopup,
-          addLikeOnCard,
-          removeLikeFromCard
-        )
-      )
+      cardsContainer.append(createCard(item, userId, deleteCard, toggleLike, openImagePopup))
     })
   })
   .catch(handleError)
@@ -152,10 +140,8 @@ function handleCardCreateFormSubmit(evt) {
         cardData,
         cardData.owner._id,
         deleteCard,
-        likeCard,
-        openImagePopup,
-        addLikeOnCard,
-        removeLikeFromCard
+        toggleLike,
+        openImagePopup
       )
       cardsContainer.prepend(newCard)
       closeModal(cardCreatePopup)

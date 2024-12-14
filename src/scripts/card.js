@@ -1,4 +1,4 @@
-import { deleteCardFromServer } from './api.js'
+import { deleteCardFromServer, addLikeOnCard, removeLikeFromCard } from './api.js'
 
 export function deleteCard(cardElement, cardId) {
   deleteCardFromServer(cardId)
@@ -8,17 +8,25 @@ export function deleteCard(cardElement, cardId) {
     .catch((error) => console.error(`Ошибка при удалении карточки ${error.status}`))
 }
 
-export const likeCard = (evt) => evt.target.classList.toggle('card__like-button_is-active')
+function cardHasLike(cardData, userId) {
+  const likes = cardData.likes
+  return likes.some((like) => like._id === userId)
+}
 
-export function createCard(
-  cardData,
-  userId,
-  deleteCallback,
-  likeCallback,
-  openImageCallback,
-  addLikeCallback,
-  removeLikeCallback
-) {
+export function toggleLike(cardData, button, cardId, userId, likeCounter) {
+  const hasLike = cardHasLike(cardData, userId)
+  const updateLikeInfo = hasLike ? removeLikeFromCard : addLikeOnCard
+  updateLikeInfo(cardId).then((data) => {
+    const likes = data.likes
+    cardData.likes = likes
+
+    const hasLike = cardHasLike(cardData, userId)
+    button.classList.toggle('card__like-button_is-active', hasLike)
+    likeCounter.textContent = likes.length
+  })
+}
+
+export function createCard(cardData, userId, deleteCallback, likeCallback, openImageCallback) {
   const cardTemplate = document.querySelector('#card-template').content
   const cardElement = cardTemplate.querySelector('.card').cloneNode(true)
   const cardImage = cardElement.querySelector('.card__image')
@@ -33,17 +41,15 @@ export function createCard(
   cardImage.alt = cardData.name
   cardLikeCounter.textContent = cardData.likes.length || 0
 
-  // лайк карточки
-  const likeButtonFn = (evt) => {
-    likeCallback(evt)
+  // отображаем лайки, который поставил текущий пользователь
+  const hasLike = cardHasLike(cardData, userId)
+  cardLikeButton.classList.toggle('card__like-button_is-active', hasLike)
+
+  // функция для работы с лайками карточки
+  const likeButtonFn = () => {
+    likeCallback(cardData, cardLikeButton, cardId, userId, cardLikeCounter)
   }
   cardLikeButton.addEventListener('click', likeButtonFn)
-
-  // const hasLike = cardLikeButton.classList.contains('card__like-button_is-active');
-  // cardLikeButton.classList.toggle(
-  //   'card__like-button_is-active',
-  //   likes.some((user) => user._id === userId)
-  // )
 
   //удаление карточки, если её добавил текущий пользователь
   if (userId === cardOwnerId) {
