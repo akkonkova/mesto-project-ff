@@ -33,7 +33,6 @@ function getDataFromAPI(urlPath, method, body = null) {
         return Promise.reject(res)
       }
     })
-    .catch(handleError)
 }
 //основные функции для наполнения и взаимодействия с контентом сайта
 function getUserDataForProfile() {

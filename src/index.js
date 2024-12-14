@@ -50,10 +50,8 @@ const validationConfig = {
 
 // инициализируем получение данных с сервера для заполнения профиля, а также получение данных для карточек
 Promise.all([getUserDataForProfile(), getDataForInitialCards()])
-  .then((data) => {
-    const userProfileInfo = data[0]
+  .then(([userProfileInfo, initialCardsFromServer]) => {
     userId = userProfileInfo._id
-    const initialCardsFromServer = data[1]
     fillProfileUserinfo(userProfileInfo)
     initialCardsFromServer.forEach((item) => {
       cardsContainer.append(createCard(item, userId, deleteCard, toggleLike, openImagePopup))
@@ -110,6 +108,7 @@ function handleProfilePopupFormSubmit(evt) {
       clearValidation(profilePopupForm, validationConfig)
       closeModal(profilePopup)
     })
+    .catch(handleError)
     .finally(() => {
       renderLoading(false, profilePopupFormButton)
     })
@@ -125,6 +124,7 @@ function handleAvatarPopupFormSubmit(evt) {
       clearValidation(avatarPopupForm, validationConfig)
       closeModal(avatarPopup)
     })
+    .catch(handleError)
     .finally(() => {
       renderLoading(false, avatarPopupFormButton)
     })

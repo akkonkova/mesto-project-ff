@@ -9,14 +9,14 @@ export function deleteCard(cardElement, cardId) {
 }
 
 function cardHasLike(cardData, userId) {
-  const likes = cardData.likes
-  return likes.some((like) => like._id === userId)
+  return cardData.likes.some((like) => like._id === userId)
 }
 
 export function toggleLike(cardData, button, cardId, userId, likeCounter) {
   const hasLike = cardHasLike(cardData, userId)
   const updateLikeInfo = hasLike ? removeLikeFromCard : addLikeOnCard
-  updateLikeInfo(cardId).then((data) => {
+  updateLikeInfo(cardId)
+  .then((data) => {
     const likes = data.likes
     cardData.likes = likes
 
@@ -24,6 +24,7 @@ export function toggleLike(cardData, button, cardId, userId, likeCounter) {
     button.classList.toggle('card__like-button_is-active', hasLike)
     likeCounter.textContent = likes.length
   })
+  .catch((error) => console.error(`Ошибка при постановке лайка на карточке ${error.status}`))
 }
 
 export function createCard(cardData, userId, deleteCallback, likeCallback, openImageCallback) {
@@ -39,7 +40,7 @@ export function createCard(cardData, userId, deleteCallback, likeCallback, openI
   cardImage.src = cardData.link
   cardTitle.textContent = cardData.name
   cardImage.alt = cardData.name
-  cardLikeCounter.textContent = cardData.likes.length || 0
+  cardLikeCounter.textContent = cardData.likes.length
 
   // отображаем лайки, который поставил текущий пользователь
   const hasLike = cardHasLike(cardData, userId)
