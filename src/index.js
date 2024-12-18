@@ -22,7 +22,6 @@ const profileDescription = document.querySelector('.profile__description')
 const profileAvatar = document.querySelector('.profile__image')
 const popupNameInput = document.querySelector('.popup__input_type_name')
 const popupJobInput = document.querySelector('.popup__input_type_description')
-const popupCloseButton = document.querySelectorAll('.popup__close')
 const cardCreateButton = document.querySelector('.profile__add-button')
 const cardCreatePopup = document.querySelector('.popup_type_new-card')
 const cardCreateForm = document.forms['new-place']
@@ -36,7 +35,7 @@ const avatarPopupForm = document.forms['edit-avatar']
 const avatarPopupFormButton = avatarPopupForm.querySelector('.popup__button')
 const avatarPopupInput = avatarPopupForm.querySelector('.popup__input_type_avatar')
 const avatarContainer = document.querySelector('.profile__image-container')
-
+const cardDeleteConfirmationPopup = document.querySelector('.popup_type_confirm_remove')
 let userId
 
 const validationConfig = {
@@ -54,7 +53,9 @@ Promise.all([getUserDataForProfile(), getDataForInitialCards()])
     userId = userProfileInfo._id
     fillProfileUserinfo(userProfileInfo)
     initialCardsFromServer.forEach((item) => {
-      cardsContainer.append(createCard(item, userId, deleteCard, toggleLike, openImagePopup))
+      cardsContainer.append(
+        createCard(item, userId, openDeleteConfirmationPopup, toggleLike, openImagePopup)
+      )
     })
   })
   .catch(handleError)
@@ -130,6 +131,20 @@ function handleAvatarPopupFormSubmit(evt) {
     })
 }
 
+//открытие окна подверждения удаления карточки + обработчик клика после подтверждения
+function openDeleteConfirmationPopup(cardElement, cardId) {
+  const cardDeleteConfirmButton = cardDeleteConfirmationPopup.querySelector(
+    validationConfig.submitButtonSelector
+  )
+
+  openModal(cardDeleteConfirmationPopup)
+
+  cardDeleteConfirmButton.addEventListener('click', () => {
+    deleteCard(cardElement, cardId)
+    closeModal(cardDeleteConfirmationPopup)
+  })
+}
+
 // создание новой карточки по клику на плюс, отправка данных из попапов для сохранения на сервере
 function handleCardCreateFormSubmit(evt) {
   evt.preventDefault()
@@ -139,7 +154,7 @@ function handleCardCreateFormSubmit(evt) {
       const newCard = createCard(
         cardData,
         cardData.owner._id,
-        deleteCard,
+        openDeleteConfirmationPopup,
         toggleLike,
         openImagePopup
       )

@@ -16,15 +16,15 @@ export function toggleLike(cardData, button, cardId, userId, likeCounter) {
   const hasLike = cardHasLike(cardData, userId)
   const updateLikeInfo = hasLike ? removeLikeFromCard : addLikeOnCard
   updateLikeInfo(cardId)
-  .then((data) => {
-    const likes = data.likes
-    cardData.likes = likes
+    .then((data) => {
+      const likes = data.likes
+      cardData.likes = likes
 
-    const hasLike = cardHasLike(cardData, userId)
-    button.classList.toggle('card__like-button_is-active', hasLike)
-    likeCounter.textContent = likes.length
-  })
-  .catch((error) => console.error(`Ошибка при постановке лайка на карточке ${error.status}`))
+      const hasLike = cardHasLike(cardData, userId)
+      button.classList.toggle('card__like-button_is-active', hasLike)
+      likeCounter.textContent = likes.length
+    })
+    .catch((error) => console.error(`Ошибка при постановке лайка на карточке ${error.status}`))
 }
 
 export function createCard(cardData, userId, deleteCallback, likeCallback, openImageCallback) {
@@ -35,9 +35,13 @@ export function createCard(cardData, userId, deleteCallback, likeCallback, openI
   const cardDeleteButton = cardElement.querySelector('.card__delete-button')
   const cardLikeButton = cardElement.querySelector('.card__like-button')
   const cardLikeCounter = cardElement.querySelector('.card__like-count')
+  const cardDeleteConfirmationPopup = document.querySelector('.popup_type_confirm_remove')
   const cardOwnerId = cardData.owner._id
   const cardId = cardData._id
+
   cardImage.src = cardData.link
+  //удаляем карточку со страницы, если получаем ошибку загрузки картинки
+  cardImage.onerror = () => cardElement.remove()
   cardTitle.textContent = cardData.name
   cardImage.alt = cardData.name
   cardLikeCounter.textContent = cardData.likes.length

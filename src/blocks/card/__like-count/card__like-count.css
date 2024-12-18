@@ -4,3 +4,7 @@
   color: #000;
   line-height: 15px;
 }
+
+.card__like-count:hover {
+  cursor: default;
+}
