@@ -26,7 +26,7 @@
 .card__delete-button{background:transparent url(images/delete-icon.a274c87c0f6b553b47ad.svg) 50% no-repeat;background-size:18px 18px;border:none;cursor:pointer;height:18px;margin:0;padding:0;position:absolute;right:15px;top:18px;transition:.3s;visibility:hidden;width:18px}.card__delete-button:hover{opacity:.6}
 .card__title{font-size:24px;line-height:29px;margin:0;max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .card__like{align-items:center;display:flex;flex-direction:column;gap:3px}
-.card__like-count{color:#000;font-family:Inter,Arial,sans-serif;font-size:13px;line-height:15px}
+.card__like-count{color:#000;font-family:Inter,Arial,sans-serif;font-size:13px;line-height:15px}.card__like-count:hover{cursor:default}
 .card{border-radius:10px;font-family:Inter,Arial,sans-serif;overflow:hidden;position:relative}
 .popup__content{background-color:#fff;border-radius:10px;box-sizing:border-box;max-width:430px;min-height:330px;padding:34px 36px;position:relative;width:100%}@media screen and (max-width:568px){.popup__content{margin-top:40px;max-width:calc(100% - 80px);padding:30px 20px;width:100%}}
 .popup__content_content_image{background:transparent;background-size:cover;border-radius:0;display:flex;height:auto;max-height:75vh;max-width:75vw;padding:0;width:auto}
@@ -43,6 +43,8 @@
 .popup__button_disabled{background-color:#fff;border:1px solid #c4c4c4;color:#c4c4c4;pointer-events:none}
 .popup__form-field{display:flex;flex-direction:column;padding:0}
 .popup__content_type-avatar{min-height:272px}@media screen and (max-width:568px){.popup__content_type-avatar{min-height:-moz-fit-content;min-height:fit-content}}
+.popup__content_content_button{min-height:181px}
+.popup__button_confirm{margin-top:38px}
 .popup{align-items:center;background-color:rgba(0,0,0,.5);bottom:0;display:none;font-family:Inter,Arial,sans-serif;justify-content:center;left:0;position:fixed;right:0;top:0;z-index:10}
 .popup_is-animated{display:flex;opacity:0;pointer-events:none;transition:visibility 0s .6s,opacity .6s;-webkit-user-select:none;-moz-user-select:none;user-select:none;visibility:hidden}
 .popup_is-opened{display:flex;opacity:1;pointer-events:all;transition:visibility 0s,opacity .6s;visibility:visible}
