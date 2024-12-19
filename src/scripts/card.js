@@ -35,7 +35,6 @@ export function createCard(cardData, userId, deleteCallback, likeCallback, openI
   const cardDeleteButton = cardElement.querySelector('.card__delete-button')
   const cardLikeButton = cardElement.querySelector('.card__like-button')
   const cardLikeCounter = cardElement.querySelector('.card__like-count')
-  const cardDeleteConfirmationPopup = document.querySelector('.popup_type_confirm_remove')
   const cardOwnerId = cardData.owner._id
   const cardId = cardData._id
 
